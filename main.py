@@ -1,8 +1,9 @@
 # Password strength checker that checks how long it will take to crack your password
 import re
+from tkinter import *
 
 
-def get_password():
+def check_password(password):
     # RegEx for the password checks ( symbols, lower and uppercase letters, number and
     # does nor contain white spaces)
     upper = re.compile(r"[A-Z]")
@@ -14,30 +15,40 @@ def get_password():
 
     while not valid:
         charset = 94
-        password = input('Enter your password: ')
-        print(f'your chosen password is: {password}\n')
-        print("Password strengthening tips:")
+        lbl.config(text=f'\nyour chosen password is: {password}\n')
+        tips = Label(root, text="Password strengthening tips:", )
+        tips.pack(after=lbl)
         valid = True
+        # infinite loop here FIX ASAP.
+        # ============================
         if re.search(has_space, password):
-            print('Your password is invalid because it contains space.')
-            print('Try again.')
+            tips.config(text='Your password is invalid because it contains space.\nTry again.')
             valid = False
         else:
+            password_entry.destroy()
+            question.destroy()
+            pass_btn.config(text="Retry")
+            pass_btn.place(x=147, y=170)
             if not re.search(upper, password):
-                print('Your password should contain upper case letters.')
+                upper_case = Label(text='Your password should contain upper case letters.')
+                upper_case.pack()
                 charset -= 26
             if not re.search(lower, password):
-                print('Your password should contain lower case letters.')
+                lower_case = Label(text='Your password should contain lower case letters.')
+                lower_case.pack()
                 charset -= 26
             if not re.search(symbol, password):
-                print('Your password should contain Symbols.')
+                symbols = Label(text='Your password should contain Symbols.')
+                symbols.pack()
                 charset -= 32
             if not re.search(num, password):
-                print('Your password should contain numbers letters.')
+                numbers = Label(text='Your password should contain numbers letters.')
+                numbers.pack()
                 charset -= 10
             if len(password) < 12:
-                print('Your password should be at least 12 characters long.')
-            return password, charset
+                length = Label(text='Your password should be at least 12 characters long.')
+                length.pack()
+            return charset
 
 
 # cracking time calculation.
@@ -59,19 +70,43 @@ def estimate_brute_force_time(checking_pass, char_set):
         print(f"{time_in_seconds / 31536000:.2f} years")
 
 
-if __name__ == '__main__':
+def pass_btn_click():
+    password = password_entry.get()
+    if len(password) > 0:
+        charset = check_password(password)
+        estimate_brute_force_time(password, charset)
 
-    print('Welcome to CheckMyPass')
-    print('Here you can check your if password is secure.')
 
-    password, charSet = get_password()
-    estimate_brute_force_time(password, charSet)
-
-# check if password is in a weak password list.
+def check_password_list(password):
+    # check if password is in a weak password list.
     with open("CommonPasswords.txt") as f:
         for n in f:
-            start = n.find(" ")+1
+            start = n.find(" ") + 1
             end = n.find("\n")
             line = n[start:end]
             if password == line:
                 print("Your password is found in a week password list. BE AWARE!!!")
+
+
+if __name__ == '__main__':
+    # root window + title and size
+    root = Tk()
+    root.title("CheckMyPass")
+    root.geometry("350x200")
+
+    # welcome message and information
+    lbl = Label(root, text="Welcome to CheckMyPass\nHere you can check if your password is secure.\n")
+    lbl.pack()
+
+    # password entry
+    question = Label(root, text="Enter password: ")
+    question.pack()
+    password_entry = Entry(root, width=20, show='*')
+    password_entry.pack(after=question)
+    pass_btn = Button(root, text="Enter", padx=10, command=pass_btn_click)
+    pass_btn.place(x=147, y=100)
+
+    # password strength check
+
+    root.mainloop()
+
