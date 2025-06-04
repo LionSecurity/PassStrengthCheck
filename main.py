@@ -3,6 +3,31 @@ import re
 from tkinter import *
 
 
+
+class NewWindow(Toplevel):
+    def __init__(self, title, height, width, label, lines=[], master=None ):
+        super().__init__(master)
+        self.title(title)
+        self.geometry(f"{height}x{width}")
+
+        Label(self, text=label).pack()
+        if lines:
+            text = ""
+            for line in lines:
+                text += line + "\n"
+
+
+class MainWindow(Tk):
+    def __init__(self, title, height, width, label):
+        super().__init__()
+        self.title(title)
+        self.geometry(f"{height}x{width}")
+
+        Label(self, text=label).pack()
+
+
+
+
 def check_password(password):
     # RegEx for the password checks ( symbols, lower and uppercase letters, number and
     # does nor contain white spaces)
@@ -15,14 +40,14 @@ def check_password(password):
 
     while not valid:
         charset = 94
-        lbl.config(text=f'\nyour chosen password is: {password}\n')
-        tips = Label(root, text="Password strengthening tips:", )
-        tips.pack(after=lbl)
+        print(f'\nyour chosen password is: {password}\n')
+        print("Password strengthening tips:", )
+
         valid = True
         # infinite loop here FIX ASAP.
         # ============================
         if re.search(has_space, password):
-            tips.config(text='Your password is invalid because it contains space.\nTry again.')
+            print('Your password is invalid because it contains space.\nTry again.')
             valid = False
         else:
             password_entry.destroy()
@@ -72,9 +97,10 @@ def estimate_brute_force_time(checking_pass, char_set):
 
 def pass_btn_click():
     password = password_entry.get()
-    if len(password) > 0:
-        charset = check_password(password)
-        estimate_brute_force_time(password, charset)
+    NewWindow("new window", 400, 250, "this is a new window", ["hello", "how", "are", "you", "sir?"], root)
+    # if len(password) > 0:
+        # charset = check_password(password)
+        # estimate_brute_force_time(password, charset)
 
 
 def check_password_list(password):
@@ -89,14 +115,8 @@ def check_password_list(password):
 
 
 if __name__ == '__main__':
-    # root window + title and size
-    root = Tk()
-    root.title("CheckMyPass")
-    root.geometry("350x200")
-
-    # welcome message and information
-    lbl = Label(root, text="Welcome to CheckMyPass\nHere you can check if your password is secure.\n")
-    lbl.pack()
+    root = MainWindow("CheckMyPass", 350, 200, "Welcome to CheckMyPass\nHere you can check if your password is "
+                                               "secure.\n")
 
     # password entry
     question = Label(root, text="Enter password: ")
