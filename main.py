@@ -58,18 +58,25 @@ def estimate_brute_force_time(checking_pass, char_set):
     pass_length = len(checking_pass)
     total_combinations = char_set ** pass_length
     time_in_seconds = total_combinations / 1000000
-    print('\nTime To Crack:')
-    print(f'Total possible combinations: {total_combinations}')
+    ttc_txt = []
+    ttc_txt.append('\nTime To Crack:')
+    ttc_txt.append(f'Total possible combinations: {total_combinations}')
     if time_in_seconds < 60:
-        print(f"{time_in_seconds:.2f} seconds")
+        ttc_txt.append(f"{time_in_seconds:.2f} seconds")
     elif time_in_seconds < 3600:
-        print(f"{time_in_seconds / 60:.2f} minutes")
+        ttc_txt.append(f"{time_in_seconds / 60:.2f} minutes")
     elif time_in_seconds < 86400:
-        print(f"{time_in_seconds / 3600:.2f} hours")
+        ttc_txt.append(f"{time_in_seconds / 3600:.2f} hours")
     elif time_in_seconds < 31536000:
-        print(f"{time_in_seconds / 86400:.2f} days")
+        ttc_txt.append(f"{time_in_seconds / 86400:.2f} days")
     else:
-        print(f"{time_in_seconds / 31536000:.2f} years")
+        ttc_txt.append(f"{time_in_seconds / 31536000:.2f} years")
+
+    result = check_password_list(checking_pass)
+    if result:
+        ttc_txt.append("Your password is found in a weak password list. BE AWARE!!!")
+
+    return ttc_txt
 
 
 def pass_btn_click(password):
@@ -82,8 +89,8 @@ def pass_btn_click(password):
     else:
         err.destroy()
         charset, tips = check_password(password)
-        estimate_brute_force_time(password, charset)
-        NewWindow("analysis", 400, 250, f'\nyour chosen password is: {password}\n\nPassword strengthening tips:', tips, root)
+        ttc = estimate_brute_force_time(password, charset)
+        NewWindow("analysis", 400, 250, f'\nyour chosen password is: {password}\n\nPassword strengthening tips:', tips+ttc, root)
 
 
 def check_password_list(password):
@@ -94,7 +101,8 @@ def check_password_list(password):
             end = n.find("\n")
             line = n[start:end]
             if password == line:
-                print("Your password is found in a week password list. BE AWARE!!!")
+                return True
+        return False
 
 
 if __name__ == '__main__':
