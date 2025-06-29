@@ -3,7 +3,6 @@ import re
 from tkinter import *
 
 
-
 class NewWindow(Toplevel):
     def __init__(self, title, height, width, label, lines=[], master=None ):
         super().__init__(master)
@@ -15,6 +14,7 @@ class NewWindow(Toplevel):
             text = ""
             for line in lines:
                 text += line + "\n"
+            Label(self, text=text).pack()
 
 
 class MainWindow(Tk):
@@ -26,8 +26,6 @@ class MainWindow(Tk):
         Label(self, text=label).pack()
 
 
-
-
 def check_password(password):
     # RegEx for the password checks ( symbols, lower and uppercase letters, number and
     # does nor contain white spaces)
@@ -35,45 +33,24 @@ def check_password(password):
     lower = re.compile(r"[a-z]")
     num = re.compile(r"\d")
     symbol = re.compile(r"\W")
-    has_space = re.compile(r'\s')
-    valid = False
+    tips = []
+    charset = 94
 
-    while not valid:
-        charset = 94
-        print(f'\nyour chosen password is: {password}\n')
-        print("Password strengthening tips:", )
-
-        valid = True
-        # infinite loop here FIX ASAP.
-        # ============================
-        if re.search(has_space, password):
-            print('Your password is invalid because it contains space.\nTry again.')
-            valid = False
-        else:
-            password_entry.destroy()
-            question.destroy()
-            pass_btn.config(text="Retry")
-            pass_btn.place(x=147, y=170)
-            if not re.search(upper, password):
-                upper_case = Label(text='Your password should contain upper case letters.')
-                upper_case.pack()
-                charset -= 26
-            if not re.search(lower, password):
-                lower_case = Label(text='Your password should contain lower case letters.')
-                lower_case.pack()
-                charset -= 26
-            if not re.search(symbol, password):
-                symbols = Label(text='Your password should contain Symbols.')
-                symbols.pack()
-                charset -= 32
-            if not re.search(num, password):
-                numbers = Label(text='Your password should contain numbers letters.')
-                numbers.pack()
-                charset -= 10
-            if len(password) < 12:
-                length = Label(text='Your password should be at least 12 characters long.')
-                length.pack()
-            return charset
+    if not re.search(upper, password):
+        tips.append('Your password should contain upper case letters.')
+        charset -= 26
+    if not re.search(lower, password):
+        tips.append('Your password should contain lower case letters.')
+        charset -= 26
+    if not re.search(symbol, password):
+        tips.append('Your password should contain Symbols.')
+        charset -= 32
+    if not re.search(num, password):
+        tips.append('Your password should contain numbers letters.')
+        charset -= 10
+    if len(password) < 12:
+        tips.append('Your password should be at least 12 characters long.')
+    return charset, tips
 
 
 # cracking time calculation.
@@ -95,12 +72,18 @@ def estimate_brute_force_time(checking_pass, char_set):
         print(f"{time_in_seconds / 31536000:.2f} years")
 
 
-def pass_btn_click():
-    password = password_entry.get()
-    NewWindow("new window", 400, 250, "this is a new window", ["hello", "how", "are", "you", "sir?"], root)
-    # if len(password) > 0:
-        # charset = check_password(password)
-        # estimate_brute_force_time(password, charset)
+def pass_btn_click(password):
+    if re.search(r'\s', password):
+        err.config(text='Your password is invalid because it contains space.\nTry again.')
+        err.place(x=40, y=150)
+    elif len(password) == 0:
+        err.config(text='You Forgot to enter a password.\nTry again.')
+        err.place(x=90, y=150)
+    else:
+        err.destroy()
+        charset, tips = check_password(password)
+        estimate_brute_force_time(password, charset)
+        NewWindow("analysis", 400, 250, f'\nyour chosen password is: {password}\n\nPassword strengthening tips:', tips, root)
 
 
 def check_password_list(password):
@@ -123,10 +106,9 @@ if __name__ == '__main__':
     question.pack()
     password_entry = Entry(root, width=20, show='*')
     password_entry.pack(after=question)
-    pass_btn = Button(root, text="Enter", padx=10, command=pass_btn_click)
+    pass_btn = Button(root, text="Enter", padx=10, command=lambda: pass_btn_click(password_entry.get()))
     pass_btn.place(x=147, y=100)
-
-    # password strength check
+    err = Label(root)
 
     root.mainloop()
 
