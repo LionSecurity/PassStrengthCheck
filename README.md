@@ -13,8 +13,13 @@ This project is a Password Strength Checker designed to evaluate the strength of
 1. Clone the repository:
    ```bash
    git clone https://github.com/LionSecurity/PassStrengthCheck.git
-   bash```
+   ```
 
 2. Navigate to the project directory:
    ```bash
    cd PassStrengthCheck
+   ```
+3. Run the script:
+   ```bash
+   python PassStrengthCheck.py
+   ```
