@@ -8,3 +8,8 @@ This project is a Password Strength Checker designed to evaluate the strength of
 - Estimates brute-force time based on possible character combinations.
 - Provides user-friendly feedback on password strength.
 - Simple GUI for easy interaction.
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/LionSecurity/PassStrengthCheck.git
