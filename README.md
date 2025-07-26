@@ -6,5 +6,5 @@ This project is a Password Strength Checker designed to evaluate the strength of
 ## Features
 - Analyzes password length, uppercase, lowercase, digits, and special characters.
 - Estimates brute-force time based on possible character combinations.
-- Provides user-friendly feedback on password strength (e.g., Weak, Moderate, Strong).
-- Simple command-line interface for easy interaction.
+- Provides user-friendly feedback on password strength.
+- Simple GUI for easy interaction.
